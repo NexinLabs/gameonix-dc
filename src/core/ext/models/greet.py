@@ -17,7 +17,7 @@ class GreetModel:
         cursor.execute('''SELECT * FROM greets WHERE channel_id = ?''', (channel_id,))
         result = cursor.fetchone()
         if result:
-            return Greet(*result)
+            return GreetModel(*result)
         return None
 
     
