@@ -1,8 +1,10 @@
+import cogs
+import config
 from discord.ext import commands
 from discord import Activity, ActivityType, AllowedMentions
-from discord import Intents
-from cogs import events, cmd
-import config
+from discord import Intents, Object
+
+
 
 class Gameonix(commands.AutoShardedBot):
         def __init__(self) -> None:
@@ -20,12 +22,13 @@ class Gameonix(commands.AutoShardedBot):
             print(f"Logged in as {self.user} (ID: {self.user.id})")
             print(f"Shard ID: {self.shard_id}")
             print(f"Shard Count: {self.shard_count}")
+            print(f"Commands : {len(self.tree.get_commands())}")
             print("------")
             await self.change_presence(activity=Activity(type=ActivityType.listening, name="-help"))
         
         async def setup_hook(self) -> None:
-            # self.remove_command("help")
-            await events.setup(self)
-            await cmd.setup(self)
+            await cogs.setup(self)
             await self.tree.sync()
+            for guild in self.config.TESTING_SERVERS:
+                await self.tree.sync(guild=Object(id=guild))
         

@@ -32,9 +32,3 @@ def add_greet(guild_id : int, channel_id: int, greet_msg:str, image_url:str):
         print(f"Channel {channel_id} already has a greet message in guild {guild_id}.")
 
 initialize_db()
-greet_msg = "Hello, welcome to the server!"
-channel_id = 1234567890
-guild_id = 9876543210
-image_url = "https://example.com/image.png"
-
-add_greet(guild_id, channel_id, greet_msg, image_url)
