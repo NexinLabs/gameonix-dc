@@ -1,2 +1,2 @@
 cd src
-uv run main.py
+uv run main.py --active

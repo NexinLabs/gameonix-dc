@@ -1,7 +1,7 @@
 from discord.ext import commands
 from discord import Activity, ActivityType, AllowedMentions
 from discord import Intents
-from cogs import events
+from cogs import events, cmd
 import config
 
 class Gameonix(commands.AutoShardedBot):
@@ -24,6 +24,8 @@ class Gameonix(commands.AutoShardedBot):
             await self.change_presence(activity=Activity(type=ActivityType.listening, name="-help"))
         
         async def setup_hook(self) -> None:
-            self.remove_command("help")
+            # self.remove_command("help")
             await events.setup(self)
+            await cmd.setup(self)
+            await self.tree.sync()
         
