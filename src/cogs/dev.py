@@ -9,6 +9,7 @@ class DevOnlyCog(commands.Cog):
 
 
     @commands.command(hidden=True)
+    @commands.is_owner()
     async def system(self, ctx:commands.Context):
         if ctx.author.bot:return
         cpu_usage = psutil.cpu_percent()
@@ -16,7 +17,7 @@ class DevOnlyCog(commands.Cog):
         disk = psutil.disk_usage('/')
         detail = f"""
 Total RAM : {memory.total / (1024**3):.2f} GB\n
-CPU Cores : P: {psutil.cpu_count(logical=True)}, L: {psutil.cpu_count(logical=False)}\n
+CPU Cores : P: {psutil.cpu_count(logical=False)}, L: {psutil.cpu_count(logical=True)}\n
 CPU Usage : {cpu_usage}%\n
 RAM Usage : {memory.used//10**6} MB({memory.percent}%)\n
 Total Disk: {disk.total//10**9} GB\n

@@ -2,7 +2,7 @@ import cogs
 import config
 from discord.ext import commands
 from discord import Activity, ActivityType, AllowedMentions
-from discord import Intents, Object
+from discord import Intents, Object, Message
 
 
 
@@ -31,4 +31,10 @@ class Gameonix(commands.AutoShardedBot):
             await self.tree.sync()
             for guild in self.config.TESTING_SERVERS:
                 await self.tree.sync(guild=Object(id=guild))
+
+
+        async def on_message(self, message:Message):
+             if message.author.bot:
+                return
+             await self.process_commands(message)
         
