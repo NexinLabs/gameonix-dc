@@ -24,6 +24,11 @@ class Greeting(commands.Cog):
 
 
     @greet.command(name="test", description="Test the greet command")
+    @commands.guild_only()
+    @commands.cooldown(2, 60, commands.BucketType.user)
+    @commands.bot_has_permissions(send_messages=True, embed_links=True, manage_messages=True)
+    @commands.has_permissions(manage_guild=True)
+    
     async def test(self, ctx:commands.Context, channel:TextChannel) -> None:
         _greet_obj = GreetModel.get_greet(channel.id)
         if not _greet_obj:
@@ -179,4 +184,38 @@ class Greeting(commands.Cog):
             await ctx.send("Greeting message removed successfully.")
         except Exception as e:
             await ctx.send(f"Error removing greeting message: {e}")
+
+
+
+    @commands.Cog.listener("on_member_join")
+    async def on_member_join(self, member:Member) -> None:
+        if member.bot:
+            return
+        if not member.guild:
+            return
+        if not member.guild.id in self.bot.config.TESTING_SERVERS:
+            return
+
+        _greet_objs = GreetModel.get_greet_by_guild(member.guild.id)
+        if not _greet_objs:
+            return
+        for _greet_obj in _greet_objs:
+            channel = self.bot.get_channel(_greet_obj.channel_id)
+
+            if not channel or not isinstance(channel, TextChannel):
+                return
+
+            if _greet_obj.is_embed:
+                embed = Embed(color=self.bot.color.random(), description=_greet_obj.greet_msg.format(member=member, guild=member.guild))
+
+                if _greet_obj.image_url:
+                    embed.set_image(url=_greet_obj.image_url)
+
+                await channel.send(
+                    embed=embed,
+                    content=_greet_obj.content.format(member=member, guild=member.guild)
+                )
+                return
+
+            await channel.send(content=_greet_obj.content.format(member=member, guild=member.guild) + _greet_obj.greet_msg, embed=None)
 

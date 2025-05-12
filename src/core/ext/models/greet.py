@@ -30,6 +30,14 @@ class GreetModel:
         if result:
             return GreetModel(*result)
         return None
+    
+    @staticmethod
+    def get_greet_by_guild(guild_id:int)-> 'list[GreetModel]':
+        cursor.execute('''SELECT * FROM greets WHERE guild_id = ?''', (guild_id,))
+        results = cursor.fetchall()
+        if results:
+            return [ GreetModel(*result) for result in results ]
+        return None
 
     
     @staticmethod

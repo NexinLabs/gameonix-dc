@@ -22,7 +22,7 @@ class Gameonix(commands.AutoShardedBot):
                 command_prefix= commands.when_mentioned_or(config.COMMAND_PREFIX),
                 intents=Intents.all(),
                 allowed_mentions=AllowedMentions(everyone=False, roles=False, replied_user=True, users=True),
-                activity=Activity(type=ActivityType.listening, name="-help")
+                activity=Activity(type=ActivityType.listening, name=f"{config.COMMAND_PREFIX}help")
         )
             
         async def on_ready(self) -> None:

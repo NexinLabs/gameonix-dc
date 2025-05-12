@@ -10,8 +10,6 @@ if TYPE_CHECKING:
     from core.bot import Gameonix
 
 
-
-
 class UtilityCog(commands.Cog):
     def __init__(self, bot: "Gameonix") -> None:
         self.bot = bot

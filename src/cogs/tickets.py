@@ -68,7 +68,8 @@ class Ticket(commands.Cog):
         if not button_color:
             button_color = ButtonStyle.blurple
 
-        else:button_color = button_color.value
+        else:
+            button_color = button_color.value
         view = View().add_item(
             Button(
                 emoji=button_emoji or "✅", 
@@ -109,12 +110,12 @@ class Ticket(commands.Cog):
                 color=color.GREEN
             )
             view = View().add_item(
-                Button(label="Close Ticket", style=ButtonStyle.red, custom_id=f"{self.bot.user.id}SPTcancel")
+                Button(label="Close Ticket", style=ButtonStyle.red, custom_id=f"{self.bot.user.id}-ticket-close")
             )
             await channel.send(f"<@{interaction.user.id}>", embed=embed, view=view)
             await interaction.response.send_message(f"**Ticket <#{channel.id}> Created Successfully**", ephemeral=True, delete_after=10)
 
-        if interaction.data["custom_id"] == f"{self.bot.user.id}SPTcancel":
+        if interaction.data["custom_id"] == f"{self.bot.user.id}-ticket-close":
             closeConfirm = Button(label="Confirm", style=ButtonStyle.red)
             closeCancel = Button(label="Cancel", style=ButtonStyle.green)
             view = View()
