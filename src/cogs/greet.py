@@ -29,9 +29,20 @@ class Greeting(commands.Cog):
         if not _greet_obj:
             return await ctx.send("No greeting message found for this channel.")
         
-        await ctx.send(
-            embed = Embed(color= self.bot.color.RED,description=_greet_obj.greet_msg)
-        )
+        if _greet_obj.is_embed:
+            embed = Embed(color=self.bot.color.random(), description=_greet_obj.greet_msg.format(member=ctx.author, guild=ctx.guild))
+
+            if _greet_obj.image_url:
+                embed.set_image(url=_greet_obj.image_url)
+
+            return await ctx.send(
+                embed=embed,
+                content=_greet_obj.content.format(member=ctx.author, guild=ctx.guild)
+            )
+
+        await ctx.send(content=_greet_obj.content.format(member=ctx.author, guild=ctx.guild) + _greet_obj.greet_msg, embed=None)
+
+
 
     @greet.command(name="setup", description="Setup the greeting message")
     @commands.guild_only()

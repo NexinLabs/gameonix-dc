@@ -9,9 +9,9 @@ def initialize_db():
             channel_id INTEGER PRIMARY KEY,
             guild_id INTEGER,
             greet_msg TEXT,
-            image_url TEXT
+            content TEXT,
+            image_url TEXT,
+            is_embed BOOLEAN
         )''')
     connection.commit()
-
-
-initialize_db()
+    print("Database initialized successfully.")
