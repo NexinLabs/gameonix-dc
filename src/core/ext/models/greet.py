@@ -1,7 +1,9 @@
-from core.ext.db import connection, cursor
+from core.ext.db import Database
 import functools
 
 greeting_cache:dict = {}
+collection = Database().greets
+
 
 class GreetModel:
     def __init__(self, channel_id:int, guild_id:int, greet_msg:str, content:str=None, image_url:str=None, is_embed:bool=True):
@@ -23,42 +25,56 @@ class GreetModel:
     @staticmethod
     @functools.cache
     def get_greet(channel_id:int)-> 'GreetModel':
-        if channel_id in greeting_cache:
-            return greeting_cache[channel_id]
-        cursor.execute('''SELECT * FROM greets WHERE channel_id = ?''', (channel_id,))
-        result = cursor.fetchone()
-        if result:
-            return GreetModel(*result)
-        return None
+        _greet:dict = collection.find_one({"channel_id": channel_id})
+        if not _greet:
+            return None
+        
+        return GreetModel(
+            channel_id=_greet["channel_id"],
+            guild_id=_greet["guild_id"],
+            greet_msg=_greet["greet_msg"],
+            content=_greet.get("content"),
+            image_url=_greet.get("image_url"),
+            is_embed=_greet.get("is_embed", True)
+        )
     
     @staticmethod
     def get_greet_by_guild(guild_id:int)-> 'list[GreetModel]':
-        cursor.execute('''SELECT * FROM greets WHERE guild_id = ?''', (guild_id,))
-        results = cursor.fetchall()
-        if results:
-            return [ GreetModel(*result) for result in results ]
-        return None
+        _greet:list[dict] = collection.find({"guild_id": guild_id})
+        if not _greet:
+            return None
+        
+        return [GreetModel(
+            channel_id=g["channel_id"],
+            guild_id=g["guild_id"],
+            greet_msg=g["greet_msg"],
+            content=g.get("content"),
+            image_url=g.get("image_url"),
+            is_embed=g.get("is_embed", True)
+        ) for g in _greet]
 
     
     @staticmethod
     def remove_greet(channel_id:int):
-        cursor.execute('''DELETE FROM greets WHERE channel_id = ?''', (channel_id))
-        connection.commit()
-        if channel_id in greeting_cache:
-            del greeting_cache[channel_id]
+        _greet:dict = collection.find_one({"channel_id": channel_id})
+        if not _greet:
+            return None
+        
+        collection.delete_one({"channel_id": channel_id})
+        greeting_cache.pop(channel_id, None)
         return True
 
 
     def save(self):
-        if GreetModel.get_greet(self.channel_id):
-            cursor.execute('''UPDATE greets SET channel_id = ?, guild_id = ?, greet_msg = ?, content = ?, image_url = ?, is_embed = ? WHERE channel_id = ?''', 
-                            (self.channel_id, self.guild_id, self.greet_msg, self.content, self.image_url, self.is_embed, self.channel_id))
-            connection.commit()
-            return self
-
-        # if no greet exists, create a new one
-        cursor.execute('''INSERT INTO greets (channel_id, guild_id, greet_msg, content, image_url, is_embed) VALUES (?, ?, ?, ?, ?, ?)''', 
-                        (self.channel_id, self.guild_id, self.greet_msg, self.content, self.image_url, self.is_embed))
-        connection.commit()
+        collection.update_one({"channel_id": self.channel_id}, {
+            "$set": {
+                "channel_id": self.channel_id,
+                "guild_id": self.guild_id,
+                "greet_msg": self.greet_msg,
+                "content": self.content,
+                "image_url": self.image_url,
+                "is_embed": self.is_embed
+            }
+        }, upsert=True)
         greeting_cache[self.channel_id] = self
-        return self
+        return True

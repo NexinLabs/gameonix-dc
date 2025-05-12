@@ -7,6 +7,9 @@ requires-python = ">=3.11"
 dependencies = [
     "discord-py>=2.5.2",
     "dotenv>=0.9.9",
+    "pillow>=11.2.1",
     "psutil>=7.0.0",
     "pymongo>=4.12.1",
+    "pytz>=2025.2",
+    "requests>=2.32.3",
 ]
