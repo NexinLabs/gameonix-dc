@@ -1,4 +1,4 @@
-from discord import Embed, TextChannel, Member
+from discord import Embed, TextChannel, Member, Guild
 from discord.ext import commands
 from core.ext.models import GreetModel
 from typing import TYPE_CHECKING
@@ -14,6 +14,17 @@ class GreetMember:
         self.global_name = member.global_name
         self.avatar_url = member.avatar.url if member.avatar else None
         self.banner_url = member.banner.url if member.banner else None
+
+
+class GreetGuild:
+    def __init__(self, guild:Guild) -> None:
+        self.name = guild.name
+        self.id = guild.id
+        self.icon_url = guild.icon.url if guild.icon else None
+        self.banner_url = guild.banner.url if guild.banner else None
+        self.member_count = guild.member_count
+        self.owner = guild.owner
+
 
 
 class Greeting(commands.Cog):
@@ -223,7 +234,7 @@ class Greeting(commands.Cog):
             channel = self.bot.get_channel(_greet_obj.channel_id)
 
             if _greet_obj.is_embed:
-                embed = Embed(color=self.bot.color.random(), description=_greet_obj.greet_msg.format(member=GreetMember(member), guild=member.guild.name))
+                embed = Embed(color=self.bot.color.random(), description=_greet_obj.greet_msg.format(member=GreetMember(member), guild=GreetGuild(member.guild)))
 
                 if member.guild.icon:
                     embed.set_thumbnail(url=member.guild.icon.url)
@@ -233,9 +244,9 @@ class Greeting(commands.Cog):
 
                 await channel.send(
                     embed=embed,
-                    content=_greet_obj.content.format(member=member, guild=member.guild)
+                    content=_greet_obj.content.format(member=member, guild=GreetGuild(member.guild))
                 )
                 return
 
-            await channel.send(content=_greet_obj.content.format(member=GreetMember(member), guild=member.guild.name) + _greet_obj.greet_msg, embed=None)
+            await channel.send(content=_greet_obj.content.format(member=GreetMember(member), guild=member.guild) + _greet_obj.greet_msg, embed=None)
 
