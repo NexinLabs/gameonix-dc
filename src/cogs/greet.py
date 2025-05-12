@@ -1,5 +1,6 @@
 from discord import Embed, TextChannel
 from discord.ext import commands
+from core.ext import ui, helper
 from core.ext.models import GreetModel
 from typing import TYPE_CHECKING
 
@@ -14,7 +15,7 @@ class Greeting(commands.Cog):
         self.greeting : GreetModel = None
 
 
-    @commands.hybrid_group(name="greet", description="Greeting commands")
+    @commands.hybrid_group(name="greet", description="Greeting commands", invoke_without_command=True)
     async def greet(self, ctx:commands.Context) -> None:
         if ctx.invoked_subcommand:
             return
@@ -31,6 +32,41 @@ class Greeting(commands.Cog):
         await ctx.send(
             embed = Embed(color= self.bot.color.RED,description=_greet_obj.greet_msg)
         )
+
+    @greet.command(name="setup", description="Setup the greeting message")
+    @commands.guild_only()
+    @commands.has_permissions(manage_guild=True)
+    @commands.cooldown(2, 60, commands.BucketType.user)
+    @commands.bot_has_permissions(send_messages=True, embed_links=True, manage_messages=True)
+    async def create(self, ctx:commands.Context, channel:TextChannel) -> None:
+        if ctx.author.bot:
+            return
+        
+        _content = "Hey, {member.mention}!"
+        _message = f"""
+
+ {self.bot.emoji.A_CONGO}Welcome To HG {'{guild.name}'}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{self.bot.emoji.A_ARROW}│Read Rules in ⁠<#1367884467594723496>
+{self.bot.emoji.A_ARROW}│Chat with Server Members in ⁠<#1367884467821346944>
+{self.bot.emoji.A_ARROW}│Take Self Roles From <#1367884467594723497>
+{self.bot.emoji.A_ARROW}│Talk to Members in ⁠<#1367884467997511774>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{self.bot.emoji.A_HEART_BEAT_1} Thanks For Joining {self.bot.emoji.A_HEART_BEAT_1}
+""" 
+        _greeting = GreetModel(
+            channel_id=channel.id,
+            guild_id=ctx.guild.id,
+            greet_msg=_message,
+            content=_content,
+            is_embed=True
+        )
+        _greeting.save()
+        self.greeting = _greeting
+        await ctx.send("Greeting message setup successfully.")
+        
+
+
 
 
     @greet.group(name="set", description="Set the greeting message")
