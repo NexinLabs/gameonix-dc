@@ -5,7 +5,7 @@ from core.ext import emoji
 from core.ext import color
 from discord.ext import commands
 from discord.ui import View, Button
-from discord import Embed, PermissionOverwrite, Role, Emoji, ButtonStyle, Interaction
+from discord import Embed, PermissionOverwrite, Role, Emoji, ButtonStyle, Interaction, app_commands
 from typing import TYPE_CHECKING
    
 if TYPE_CHECKING:
@@ -32,6 +32,13 @@ class Ticket(commands.Cog):
 
 
     @ticket.command(name="setup", description="Setup Ticket System")
+    @app_commands.describe(
+        mod_role="Role to manage tickets",
+        button_label="Label for the button",
+        button_emoji="Emoji for the button",
+        button_color="Color for the button",
+        message="Message to send in the ticket channel"
+    )
     @commands.guild_only()
     @commands.cooldown(2, 60, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, manage_messages=True, manage_channels=True, manage_roles=True)

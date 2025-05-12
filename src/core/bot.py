@@ -1,6 +1,7 @@
 import cogs
 import config
 from discord.ext import commands
+from core.ext import color, emoji
 from discord import Activity, ActivityType, AllowedMentions
 from discord import Intents, Object, Message
 
@@ -9,6 +10,8 @@ from discord import Intents, Object, Message
 class Gameonix(commands.AutoShardedBot):
         def __init__(self) -> None:
             self.config = config
+            self.color = color
+            self.emoji = emoji
 
             super().__init__(
                 shard_count=config.SHARD_COUNT, 
