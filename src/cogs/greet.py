@@ -1,4 +1,4 @@
-from discord import Embed, TextChannel
+from discord import Embed, TextChannel, Member
 from discord.ext import commands
 from core.ext import ui, helper
 from core.ext.models import GreetModel
@@ -56,7 +56,7 @@ class Greeting(commands.Cog):
         _content = "Hey, {member.mention}!"
         _message = f"""
 
- {self.bot.emoji.A_CONGO}Welcome To HG {'{guild.name}'}
+ {self.bot.emoji.A_CONGO} Welcome To {'{guild.name}'} {self.bot.emoji.A_CONGO}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
 {self.bot.emoji.A_ARROW}│Read Rules in ⁠<#1367884467594723496>
 {self.bot.emoji.A_ARROW}│Chat with Server Members in ⁠<#1367884467821346944>

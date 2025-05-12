@@ -1,6 +1,7 @@
 from core.ext.db import connection, cursor
 import functools
 
+greeting_cache:dict = {}
 
 class GreetModel:
     def __init__(self, channel_id:int, guild_id:int, greet_msg:str, content:str=None, image_url:str=None, is_embed:bool=True):
@@ -21,7 +22,9 @@ class GreetModel:
 
     @staticmethod
     @functools.cache
-    def get_greet(channel_id:int):
+    def get_greet(channel_id:int)-> 'GreetModel':
+        if channel_id in greeting_cache:
+            return greeting_cache[channel_id]
         cursor.execute('''SELECT * FROM greets WHERE channel_id = ?''', (channel_id,))
         result = cursor.fetchone()
         if result:
@@ -33,6 +36,8 @@ class GreetModel:
     def remove_greet(channel_id:int):
         cursor.execute('''DELETE FROM greets WHERE channel_id = ?''', (channel_id))
         connection.commit()
+        if channel_id in greeting_cache:
+            del greeting_cache[channel_id]
         return True
 
 
@@ -47,4 +52,5 @@ class GreetModel:
         cursor.execute('''INSERT INTO greets (channel_id, guild_id, greet_msg, content, image_url, is_embed) VALUES (?, ?, ?, ?, ?, ?)''', 
                         (self.channel_id, self.guild_id, self.greet_msg, self.content, self.image_url, self.is_embed))
         connection.commit()
+        greeting_cache[self.channel_id] = self
         return self
