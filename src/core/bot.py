@@ -28,9 +28,6 @@ class Gameonix(commands.AutoShardedBot):
             
         async def on_ready(self) -> None:
             self.logger.info(f"Logged in as {self.user} (ID: {self.user.id})")
-            self.logger.info(f"Shard ID: {self.shard_id}")
-            self.logger.info(f"Shard Count: {self.shard_count}")
-            self.logger.info(f"Commands : {len(self.tree.get_commands())}")
             await self.change_presence(activity=Activity(type=ActivityType.listening, name="-help"))
         
         async def setup_hook(self) -> None:

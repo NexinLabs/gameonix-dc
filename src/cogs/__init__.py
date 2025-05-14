@@ -3,6 +3,7 @@ from cogs.tickets import Ticket
 from cogs.greet import Greeting
 from cogs.dev import DevOnlyCog
 from cogs.utility import UtilityCog
+from cogs.role import RoleCog
 
 
 if TYPE_CHECKING:
@@ -14,3 +15,4 @@ async def setup(bot: "Gameonix") -> None:
     await bot.add_cog(Ticket(bot))
     await bot.add_cog(DevOnlyCog(bot))
     await bot.add_cog(UtilityCog(bot))
+    await bot.add_cog(RoleCog(bot))
