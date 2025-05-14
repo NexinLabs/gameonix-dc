@@ -68,12 +68,7 @@ class RoleCog(commands.Cog):
         guild = ctx.guild
 
         _autoroles = self.bot.models.GuildAutoRoleModel.findOne(guild.id)
-        if role.id == _autoroles.auto_role_bot:
-            return await ctx.send(f"{role.mention} is already set as auto role for bot members")
-        
-        _autoroles.auto_role_bot=role.id
-        _autoroles.save()
-        await ctx.send(f"Added {role.mention} to auto roles for bot members")
+
 
         if not _autoroles:
             _autoroles = self.bot.models.GuildAutoRoleModel.create(
@@ -83,6 +78,16 @@ class RoleCog(commands.Cog):
             if not _autoroles:
                 return await ctx.send("Failed to create auto role model")
             await ctx.send(f"Added {role.mention} to auto roles for bot members")
+            return
+
+
+        if role.id == _autoroles.auto_role_bot:
+            return await ctx.send(f"{role.mention} is already set as auto role for bot members")
+        
+        _autoroles.auto_role_bot=role.id
+        _autoroles.save()
+        await ctx.send(f"Added {role.mention} to auto roles for bot members")
+
 
 
             
