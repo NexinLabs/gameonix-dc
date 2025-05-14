@@ -22,6 +22,7 @@ class Database:
             self.client = MongoClient(config.MONGO_URI)
             self.db = self.client[config.DB_NAME]
             self.greets = self.db["greets"]
+            self.autoroles = self.db["autoroles"]
 
             
             Logger.info("Database Connected.")
