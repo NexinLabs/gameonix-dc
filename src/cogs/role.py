@@ -41,7 +41,7 @@ class RoleCog(commands.Cog):
         if not _autoroles:
             _autoroles = self.bot.models.GuildAutoRoleModel.create(
                 guild_id=guild.id,
-                auto_roles_human=role.id
+                auto_role_human=role.id
             )
             if not _autoroles:
                 return await ctx.send("Failed to create auto role model")
