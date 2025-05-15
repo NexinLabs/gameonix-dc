@@ -30,7 +30,7 @@ class RoleCog(commands.Cog):
     @commands.guild_only()
     @app_commands.guild_only()
     @commands.has_permissions(manage_roles=True)
-    @commands.bot_has_permissions(manage_roles=True)
+    @commands.bot_has_guild_permissions(manage_roles=True)
     async def autorole(self, ctx: commands.Context) -> None:
         if ctx.invoked_subcommand:
             return
@@ -74,11 +74,11 @@ class RoleCog(commands.Cog):
     @commands.guild_only()
     @app_commands.guild_only()
     @commands.has_permissions(manage_roles=True)
-    @permissions.maintenance_notice() # This is a placeholder for the maintenance notice
+    @commands.bot_has_guild_permissions(manage_roles=True)
     async def autorole_add_human(self, ctx: commands.Context, role: Role) -> None:
         """Add auto roles to human members"""
 
-        if self.is_role_accessible(role):
+        if not self.is_role_accessible(role):
             return await ctx.send("Seems like the role is higher than mine or not accessible !!", ephemeral=True)
         
 
@@ -108,11 +108,11 @@ class RoleCog(commands.Cog):
     @app_commands.guild_only()
     @app_commands.describe(role="The role to add")
     @commands.has_permissions(manage_roles=True)
-    @permissions.maintenance_notice() # This is a placeholder for the maintenance notice
+    @commands.bot_has_guild_permissions(manage_roles=True)
     async def autorole_add_bot(self, ctx: commands.Context, role: Role) -> None:
         """Add auto roles to bot members"""
 
-        if self.is_role_accessible(ctx.guild.me.top_role):
+        if not self.is_role_accessible(ctx.guild.me.top_role):
             return await ctx.send("Seems like the role is higher than mine or not accessible !!", ephemeral=True)
 
         _autoroles = self.bot.models.GuildAutoRoleModel.findOne(ctx.guild.id)
