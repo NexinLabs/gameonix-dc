@@ -93,7 +93,10 @@ class Greeting(commands.Cog):
     async def test(self, ctx:commands.Context, channel:TextChannel) -> None:
         if ctx.author.bot:
             return
-        
+        _greeting = GreetModel.get_greet(channel.id)
+        if not _greeting:
+            return await ctx.send("No greeting message found for this channel.")
+
         await send_greet_message(self.bot, ctx.author, channel.id)
         await ctx.send("Greeting message sent.")
 
@@ -337,7 +340,8 @@ class Greeting(commands.Cog):
     async def config(self, ctx: commands.Context) -> None:
         _greets = GreetModel.get_greet_by_guild(ctx.guild.id)
         if not _greets:
-            return await ctx.send(embed = Embed(description=f"{self.bot.emoji.FAILED} | No Greeting Found", color=self.bot.color.RED))
+            await ctx.send(embed = Embed(description=f"{self.bot.emoji.FAILED} | No Greeting Found", color=self.bot.color.RED))
+            return
         
         _descriptions = "".join([
             f"**{self.bot.emoji.A_ARROW} | <#{g.channel_id}> - {g.channel_id}**\n" for g in _greets
