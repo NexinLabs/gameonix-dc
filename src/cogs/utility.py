@@ -22,9 +22,13 @@ class UtilityCog(commands.Cog):
             return
         await ctx.defer(ephemeral=True)
         memory = psutil.virtual_memory()
+        disk = psutil.disk_usage('./')
         mem_percent = f"{(psutil.Process(os.getpid()).memory_percent()):.2f}"
         system_info = f"`{memory.total / (1024**3):.2f} GB`/ `{psutil.Process(os.getpid()).memory_info().rss//2**20} MB`/ `{mem_percent}%`"
-        emb = Embed(title=ctx.guild.me.name, color=color.GREEN)
+        emb = Embed(title=ctx.guild.me.name, color=color.random())
         emb.add_field(name=f"{emoji.ONLINE} __Latency__", value=f"`{round(self.bot.latency*1000)}ms`", inline=True)
         emb.add_field(name=f"{emoji.RAM} __Memory(Total/Usage/Percent)__", value=f"{system_info}", inline=False)
+        emb.add_field(name=f"{emoji.CPU} __CPU Usage__", value=f"`{psutil.cpu_percent(interval=1)}%`", inline=True)
+        emb.add_field(name=f"{emoji.DISK} __Disk Usage__", value=f"`{disk.used//10**9} GB({disk.percent}%)`", inline=True)
+        emb.set_footer(text=f"Made with ❤️ by {self.bot.config.DEVELOPER_DISCORD}")
         return await ctx.send(embed=emb)
