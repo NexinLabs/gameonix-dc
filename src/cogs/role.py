@@ -73,6 +73,7 @@ class RoleCog(commands.Cog):
     @app_commands.describe(role="The role to add")
     @commands.guild_only()
     @app_commands.guild_only()
+    @commands.has_permissions(manage_roles=True)
     @permissions.maintenance_notice() # This is a placeholder for the maintenance notice
     async def autorole_add_human(self, ctx: commands.Context, role: Role) -> None:
         """Add auto roles to human members"""
@@ -106,6 +107,7 @@ class RoleCog(commands.Cog):
     @commands.guild_only()
     @app_commands.guild_only()
     @app_commands.describe(role="The role to add")
+    @commands.has_permissions(manage_roles=True)
     @permissions.maintenance_notice() # This is a placeholder for the maintenance notice
     async def autorole_add_bot(self, ctx: commands.Context, role: Role) -> None:
         """Add auto roles to bot members"""
@@ -137,6 +139,7 @@ class RoleCog(commands.Cog):
     @autorole.command(name="reset", description="Reset auto roles for the guild")
     @commands.guild_only()
     @app_commands.guild_only()
+    @commands.has_permissions(manage_roles=True)
     @permissions.maintenance_notice() # This is a placeholder for the maintenance notice
     async def auto_role_reset(self, ctx: commands.Context) -> None:
         """Reset auto roles for the guild"""
