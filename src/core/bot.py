@@ -1,7 +1,7 @@
 import cogs
 import config
 from discord.ext import commands
-from core.ext import color, emoji, Logger
+from core.ext import color, emoji, Logger, errors
 from core.ext.db import Database
 from core.ext import models
 from discord import Activity, ActivityType, AllowedMentions
@@ -40,4 +40,12 @@ class Gameonix(commands.AutoShardedBot):
              if message.author.bot:
                 return
              await self.process_commands(message)
+
+
+        async def on_command_error(self, ctx:commands.Context, error:Exception):
+            await errors.manage_context(ctx, error, self)
         
+
+        async def on_disconnect(self):
+            Logger.info('Disconnected from Discord. Reconnecting...')
+            await self.wait_until_ready()
