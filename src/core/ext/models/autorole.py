@@ -65,6 +65,17 @@ class GuildAutoRoleModel:
         return GuildAutoRoleModel(**_guild)
     
 
+    def reset(self):
+        _del = collection.delete_one({
+            "guild_id": self.guild_id
+        })
+        if _del.deleted_count == 0:
+            return None
+        
+        guild_cache.pop(self.guild_id, None)
+        return True
+    
+
     def save(self) -> None:
         """Save the GuildAutoRoleModel to the database"""
         collection.update_one(
